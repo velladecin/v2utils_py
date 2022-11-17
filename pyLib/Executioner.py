@@ -111,7 +111,7 @@ class Executioner:
                     args = x[j][1:]
 
                     try:
-                        res["return"] = fn(args) if len(args) > 0 else fn()
+                        res["return"] = fn(*args) if len(args) > 0 else fn()
                     except Exception as e:
                         res["error"] = "%s" % e
 
