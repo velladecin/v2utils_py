@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2.7
 
 class Pretty(object):
     reset       = '\033[0m'
@@ -14,6 +14,10 @@ class Pretty(object):
         blue    = '\033[94m'
         purple  = '\033[95m'
         cyan    = '\033[96m'
+        darkgrey    = '\033[30m'
+        darkred     = '\033[31m'
+        darkgreen   = '\033[32m'
+        darkblue    = '\033[34m'
 
     def gray(self, s):          return self.grey(s)
     def grey(self, s):          return self.__color("grey", s)
@@ -23,6 +27,12 @@ class Pretty(object):
     def blue(self, s):          return self.__color("blue", s)
     def purple(self, s):        return self.__color("purple", s)
     def cyan(self, s):          return self.__color("cyan", s)
+    # dark
+    def darkgray(self, s):      return self.darkgrey(s)
+    def darkgrey(self, s):      return self.__color("darkgrey", s)
+    def darkred(self, s):       return self.__color("darkred", s)
+    def darkgreen(self, s):     return self.__color("darkgreen", s)
+    def darkblue(self, s):      return self.__color("darkblue", s)
     def __color(self, c, s):
         col = self.fg.grey      if c == "grey" \
          else self.fg.red       if c == "red" \
@@ -30,9 +40,13 @@ class Pretty(object):
          else self.fg.yellow    if c == "yellow" \
          else self.fg.blue      if c == "blue" \
          else self.fg.purple    if c == "purple" \
-         else self.fg.cyan
+         else self.fg.cyan      if c == "cyan" \
+         else self.fg.darkgrey  if c == "darkgrey" \
+         else self.fg.darkred   if c == "darkred" \
+         else self.fg.darkgreen if c == "darkgreen" \
+         else self.fg.darkblue
         return "%s%s%s" % (col, s, self.reset)
- 
+
     #
     # Background
 
@@ -68,7 +82,7 @@ class Pretty(object):
 
     #
     # Decorate
- 
+
     class dc:
         bold        = '\033[01m'
         italic      = '\033[03m' # does not work :(
@@ -79,7 +93,7 @@ class Pretty(object):
 
     def bold(self, s):      return self.__decorate("bold", s)
     def italic(self, s):    return self.__decorate("italic", s)
-    def underline(self, s): return self.__decorate("underline", s)
+    def underline(self, s): return self.__decorate("underline", s)
     def reverse(self, s):   return self.__decorate("reverse", s)
     def thruline(self, s):  return self.__decorate("thruline", s)
     def highlight(self, s): return self.__decorate("highlight", s)
@@ -91,10 +105,10 @@ class Pretty(object):
          else self.dc.thruline  if d == "thruline" \
          else self.dc.highlight
         return "%s%s%s" % (dec, s, self.reset)
- 
+
     #
     # Tab
- 
+
     class tab:
         # t1    single tab
         # t1p5  tab 1.5
@@ -104,7 +118,7 @@ class Pretty(object):
         t2p5    = " ".ljust(10)
         t3      = " ".ljust(12)
         t3p5    = " ".ljust(14)
- 
+
     def t1(self, s):            return self.__tab(1, s)
     def t1p5(self, s):          return self.__tab(1.5, s)
     def t2(self, s):            return self.__tab(2, s)
