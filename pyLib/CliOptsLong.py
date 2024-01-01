@@ -7,8 +7,15 @@ class CliOptionError(Exception):
         super(CliOptionError, self).__init__(msg)
 
 class cliOptLong(object):
+    # resulting options as passed on CLI
+    # and any persistent defaults
     __opts = dict()
+
+    # possible/accepted options
+    # as defined by code using this library (user)
     __collection = list()
+
+    # definition of specs for each option
     __accepted_kwargs = {   # with defaults
         "descr": "No description",
         "default": None,
@@ -31,9 +38,13 @@ class cliOptLong(object):
         # callback function
         "callback": None}
 
+    # 4 & 12 spaces for usage printing
+    __usage_l1 = "    "
+    __usage_l2 = "            "
+
     def __init__(self):
         self.__name = re.sub(r'.*/', '', sys.argv[0]) # filename without path
-        self.__usage = ""
+        self.__usage = list()
         return
 
     def add(self, *args, **kwargs):
@@ -63,22 +74,33 @@ class cliOptLong(object):
         self.__collection.append({"args": args, "kwargs": kwargs})
 
         a = ", ".join(args)
-        b = kwargs["descr"]
+        b = kwargs["descr"] if isinstance(kwargs["descr"], list) else [kwargs["descr"]]
         c = kwargs["default"] if kwargs["default"] else "none"
         d = "yes" if kwargs["value"] else "no"
         e = "yes" if kwargs["multi"] else "no"
 
-        self.__usage += """
-    %s
-            %s
-            default: %s, expects value: %s, multivalue: %s
-        """ % (a, b, c, d, e)
+        self.__usage.append("%s%s" % (self.__usage_l1, a))
+        for r in b:
+            self.__usage.append("%s%s" % (self.__usage_l2, r))
+        self.__usage.append("%sdefault: %s, expects value: %s, multivalue: %s" % (self.__usage_l2, c, d, e))
+        self.__usage.append("") # visual separator
+
+    def addUsageComment(self, msg=None):
+        self._addUsageDecorator("#", msg)
+
+    def addUsageNote(self, msg=None):
+        self._addUsageDecorator("!", msg)
+
+    def _addUsageDecorator(self, decorator, msg=None):
+        if msg: decorator += " %s" % msg
+        self.__usage.append("%s%s" % (self.__usage_l1, decorator))
 
     def usage(self, exit=0):
         print("")
+        # TODO fix this hard-coded definition
         print("Usage: %s <opt> [<val>, <val>, ..], .." % self.__name)
         print("Options:")
-        print(self.__usage)
+        print("\n".join(self.__usage))
         sys.exit(exit)
 
     def ingest(self, argv):
