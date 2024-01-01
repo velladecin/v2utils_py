@@ -148,7 +148,8 @@ class cliOptLong(object):
             if d["kwargs"]["must"] and not found:
                 raise CliOptionError("Missing required option: %s" % k)
 
-            if d["kwargs"]["default"] and d["kwargs"]["persistent"]:
+            # default can also be False, better check existence of the key
+            if "default" in d["kwargs"] and d["kwargs"]["persistent"]:
                 if not found:
                     # apply callback (on default) if required
                     cb = d["kwargs"]["callback"]
